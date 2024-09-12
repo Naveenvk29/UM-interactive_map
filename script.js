@@ -51,3 +51,47 @@ const layerControl = L.control
     textSize: "large",
   })
   .addTo(map);
+
+const geocodersearch = L.Control.Geocoder.nominatim();
+
+// Add a click event listener to the geocoder
+let currentMarker;
+
+const search = document.querySelector(".btn").addEventListener("click", () => {
+  const searchInput = document.querySelector("#search").value;
+  if (searchInput) {
+    geocodersearch.geocode(searchInput, (results) => {
+      if (results.length > 0) {
+        const result = results[0];
+        map.setView(result.center, 13);
+        if (currentMarker) {
+          map.removeLayer(currentMarker);
+        }
+        currentMarker = L.marker(result.center)
+          .addTo(map)
+          .bindPopup(result.name)
+          .openPopup();
+        getPlaceImage(result.name);
+      } else {
+        alert("Location not found.");
+      }
+    });
+  }
+});
+
+function getPlaceImage(placeName) {
+  var unsplashAPIKey = "54Z2Q6HWt_jS6B3r_gXvzeOCZPxiy2JEHkQIgWoUC98";
+  var url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+    placeName
+  )}&client_id=${unsplashAPIKey}`;
+
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.results.length > 0) {
+        var imageUrl = data.results[0].urls.regular; // Get the regular-sized image URL
+        console.log(imageUrl);
+      } else {
+      }
+    });
+}

@@ -76,3 +76,13 @@ button:active {
   width: 80%;
   height: 100vh;
 }
+.leaflet-popup-content-wrapper {
+}
+
+.leaflet-popup-content img {
+}
+
+.leaflet-popup-content h4 {
+}
+.leaflet-popup-content p {
+}
