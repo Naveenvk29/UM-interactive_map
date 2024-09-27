@@ -4,7 +4,7 @@ const titleUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const attribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & coder by Naveen Vinod Kumar with ❤️ ';
 
-const tiles = L.tileLayer(titleUrl, { attribution }).addTo(map);
+const tiles = L.tileLayer(titleUrl, { attribution });
 
 const smoothDark = L.tileLayer(
   "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}",
@@ -19,7 +19,7 @@ const googleStreets = L.tileLayer(
     maxZoom: 20,
     subdomains: ["mt0", "mt1", "mt2", "mt3"],
   }
-);
+).addTo(map);
 
 const googleHybrid = L.tileLayer(
   "http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
@@ -36,19 +36,16 @@ const googleSat = L.tileLayer(
     subdomains: ["mt0", "mt1", "mt2", "mt3"],
   }
 );
-
-// Define the layers object
 const layers = {
+  "Google Streets": googleStreets,
   OpenStreetMap: tiles,
   "Dark Mode": smoothDark,
-  "Google Streets": googleStreets,
   "Google Hybrid": googleHybrid,
   "Google Satellite": googleSat,
 };
 const layerControl = L.control
   .layers(layers, null, {
-    position: "bottomleft",
-    textSize: "large",
+    backgroundColor: "#000",
   })
   .addTo(map);
 
@@ -69,7 +66,14 @@ const search = document.querySelector(".btn").addEventListener("click", () => {
         }
         currentMarker = L.marker(result.center)
           .addTo(map)
-          .bindPopup(result.name)
+          .bindPopup(
+            `
+            <div>
+              <h4>${result.name}</h4>
+              <p>Loading image...</p>
+            </div>
+          `
+          )
           .openPopup();
         getPlaceImage(result.name);
       } else {
@@ -89,9 +93,42 @@ function getPlaceImage(placeName) {
     .then((response) => response.json())
     .then((data) => {
       if (data.results.length > 0) {
-        var imageUrl = data.results[0].urls.regular; // Get the regular-sized image URL
-        console.log(imageUrl);
+        const randomIndex = Math.floor(Math.random() * data.results.length);
+        const imageUrl = data.results[randomIndex].urls.regular; // Get the regular-sized image URL
+
+        // Update the popup content to include the image
+        if (currentMarker) {
+          currentMarker.setPopupContent(`
+          
+              <h4>${placeName}</h4>
+              <img src="${imageUrl}" alt="${placeName}" >
+            
+          `);
+          currentMarker.openPopup();
+        }
       } else {
+        console.log("No images found for this location");
+        if (currentMarker) {
+          currentMarker.setPopupContent(`
+            <div>
+              <h4>${placeName}</h4>
+              <p>No images found.</p>
+            </div>
+          `);
+          currentMarker.openPopup();
+        }
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching image:", error);
+      if (currentMarker) {
+        currentMarker.setPopupContent(`
+          <div>
+            <h4>${placeName}</h4>
+            <p>Error loading image.</p>
+          </div>
+        `);
+        currentMarker.openPopup();
       }
     });
 }

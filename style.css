@@ -36,7 +36,19 @@ main {
   width: 100%;
   gap: 8px;
   background: #c4dfdf;
-  border-radius: 50px;
+  border-radius: 500px;
+  position: relative;
+  color: black;
+}
+
+#search {
+  width: 100%;
+  font-size: 15px;
+  padding: 24px 46px 24px 26px;
+  border: none;
+  outline: none;
+  background: #c4dfdf;
+  border-radius: 500px;
   position: relative;
   color: black;
 }
@@ -64,25 +76,26 @@ button:active {
   transform: translateY(0);
 }
 
-#controls > input {
-  width: 100%;
-  font-size: 15px;
-  padding: 24px 46px 24px 26px;
-  border: none;
-  outline: none;
-  background: none;
-}
 #map {
   width: 80%;
   height: 100vh;
 }
 .leaflet-popup-content-wrapper {
+  height: 28vh;
+  width: 19vw;
+  background: hsl(0, 0%, 100%);
+
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.leaflet-popup-content {
+  max-height: 80%;
+  max-width: 80%;
+  padding: 10px;
 }
 
 .leaflet-popup-content img {
-}
-
-.leaflet-popup-content h4 {
-}
-.leaflet-popup-content p {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
 }
